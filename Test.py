@@ -1,21 +1,17 @@
-import requests, os
+import requests, os, bs4
 
 
-class ScraperShell:
+def webdl(url):
 
-    def __init__(self, url):
+    r = requests.get(url)
+    r.raise_for_status()
 
-       url = url.self
+    html = bs4.BeautifulSoup(r.text)    # Flexible portion of code for how you want to parse the data
+    return html
+
+def htmlparsing(html):
+
+    element = html.select() # Enter in what you wanna select
 
 
-
-
-class PictureScraper(ScraperShell):
-
-    pass
-
-
-class TextScraper(ScraperShell):
-
-    pass
 
