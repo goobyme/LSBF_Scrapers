@@ -1,6 +1,6 @@
-import time, datetime
+import time, datetime, bs4
 
-print(datetime.datetime.date(s))
+print(datetime.datetime.date())
 
 
 

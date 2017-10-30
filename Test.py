@@ -1,7 +1,6 @@
 import requests, os
 
 
-
 class ScraperShell:
 
     def __init__(self, url):
@@ -19,3 +18,4 @@ class PictureScraper(ScraperShell):
 class TextScraper(ScraperShell):
 
     pass
+
