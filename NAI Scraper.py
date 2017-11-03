@@ -3,39 +3,43 @@ import bs4
 import pandas
 import re
 import os
+import threading
 
-TOSCRAPE = ['http://www.naiglobal.com/members/team/nai-geis-realty-group-inc-philadelphia',
-            'http://www.naiglobal.com/members/team/nai-capital-orange-county-irvine',
-            'http://www.naiglobal.com/members/team/nai-mertz-corporation-philadelphia',
-            'http://www.naiglobal.com/members/team/nai-long-island-melville',
-            'http://www.naiglobal.com/members/team/nai-platform-albany',
-            'http://www.naiglobal.com/members/team/nai-mertz-southampton',
-            'http://www.naiglobal.com/members/team/nai-highland-llc-colorado-springs',
-            'http://www.naiglobal.com/members/team/nai-mountain-commercial-avon',
-            'http://www.naiglobal.com/members/team/nai-shames-makovsky-denver',
-            'http://www.naiglobal.com/members/team/nai-partners',
-            'http://www.naiglobal.com/members/team/nai-robert-lynn-dallas',
-            'http://www.naiglobal.com/members/team/nai-san-antonio',
-            'http://www.naiglobal.com/members/team/evo-real-estate-group-new-york',
-            'http://www.naiglobal.com/members/team/nai-klnb-baltimore',
-            'http://www.naiglobal.com/members/team/nai-klnb-columbia',
-            'http://www.naiglobal.com/members/team/nai-michael-lanham',
-            'http://www.naiglobal.com/members/team/nai-klnb-washington',
-            ]
+SEARCHPAGE = 'http://www.naiglobal.com/about-nai'
+
 
 def webdl(url):
-
+    """Downloads web-page (using requests rather than urllib) """
     print('Downloading...')
     r = requests.get(url)
-    r.raise_for_status()
-    return r
+    try:
+        r.raise_for_status()
+        return r
+    except requests.HTTPError:
+        print('Download failed for %s' % url)
+        return None
 
 
-def serachpageparsing(url):
+def searchpageparsing(page):
+    """Scrapes search page for team links by location (can expand to search NAI globally)"""
+    scrapelist = []
+    linkregex = re.compile(r"(?<=/members/).+")
 
-    # TODO add search page parsing to auto-generate TO Scrape list
+    soup = bs4.BeautifulSoup(page.text, 'lxml')
+    parent_element = soup.find_all('ul', {'region_name': 'North America'})
+    sub_elements = parent_element[0].find_all('ul', {'class': 'regionLocations'})
+    link_elements = sub_elements[1].find_all('a', {'class': 'jt'})  # Note that [1] refers to USA only excluding Canada
 
-    return None
+    for link in link_elements:
+
+        link_format = linkregex.findall(link['href'])
+        try:
+            link_final = 'http://www.naiglobal.com/members/team/' + link_format[0]
+            scrapelist.append(link_final)
+        except IndexError:
+            print('Search-page link parsing failed')
+
+    return scrapelist
 
 
 def htmlparsing(page):
@@ -46,8 +50,8 @@ def htmlparsing(page):
     titleregex = re.compile(r"(?<=Title: ).+(?=\n)")
 
     es = []
-    html = bs4.BeautifulSoup(page.text, 'lxml')
-    elements = html.find_all('div', {'class': 'tencol agentNTEPcontainer last'})
+    soup = bs4.BeautifulSoup(page.text, 'lxml')
+    elements = soup.find_all('div', {'class': 'tencol agentNTEPcontainer last'})
 
     for element in elements:
         e = {}
@@ -82,14 +86,16 @@ def htmlparsing(page):
 def main():
 
     employees = []
+    search = webdl(SEARCHPAGE)
 
-    for link in TOSCRAPE:
+    for link in searchpageparsing(search):
         page = webdl(link)
-
-        new_list = htmlparsing(page)
-        employees += new_list
-
-        print("Updated NAI with %s" % os.path.basename(link))
+        if page:
+            new_list = htmlparsing(page)
+            employees += new_list
+            print("Updated NAI with %s" % os.path.basename(link))
+        else:
+            continue
 
     data_frame = pandas.DataFrame.from_records(employees)
     data_frame.to_csv('NAI_2.csv')
@@ -99,4 +105,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-# TODO Add Threading/Queuing functionality
+# TODO Add Threading/Queuing functionality via integration into M&M search tool
+# TODO Chang person parsing to look at indv. profile page and id data from description paragraphs
+# TODO Improve error handling
