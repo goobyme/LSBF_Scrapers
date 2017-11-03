@@ -4,7 +4,24 @@ import pandas
 import re
 import os
 
-TOSCRAPE = 'http://www2.naicapital.com/offices/team/nai-capital-westlake-village'
+TOSCRAPE = ['http://www.naiglobal.com/members/team/nai-geis-realty-group-inc-philadelphia',
+            'http://www.naiglobal.com/members/team/nai-capital-orange-county-irvine',
+            'http://www.naiglobal.com/members/team/nai-mertz-corporation-philadelphia',
+            'http://www.naiglobal.com/members/team/nai-long-island-melville',
+            'http://www.naiglobal.com/members/team/nai-platform-albany',
+            'http://www.naiglobal.com/members/team/nai-mertz-southampton',
+            'http://www.naiglobal.com/members/team/nai-highland-llc-colorado-springs',
+            'http://www.naiglobal.com/members/team/nai-mountain-commercial-avon',
+            'http://www.naiglobal.com/members/team/nai-shames-makovsky-denver',
+            'http://www.naiglobal.com/members/team/nai-partners',
+            'http://www.naiglobal.com/members/team/nai-robert-lynn-dallas',
+            'http://www.naiglobal.com/members/team/nai-san-antonio',
+            'http://www.naiglobal.com/members/team/evo-real-estate-group-new-york',
+            'http://www.naiglobal.com/members/team/nai-klnb-baltimore',
+            'http://www.naiglobal.com/members/team/nai-klnb-columbia',
+            'http://www.naiglobal.com/members/team/nai-michael-lanham',
+            'http://www.naiglobal.com/members/team/nai-klnb-washington',
+            ]
 
 def webdl(url):
 
@@ -12,6 +29,13 @@ def webdl(url):
     r = requests.get(url)
     r.raise_for_status()
     return r
+
+
+def serachpageparsing(url):
+
+    # TODO add search page parsing to auto-generate TO Scrape list
+
+    return None
 
 
 def htmlparsing(page):
@@ -57,15 +81,22 @@ def htmlparsing(page):
 
 def main():
 
-    page = webdl(TOSCRAPE)
+    employees = []
 
-    employees = htmlparsing(page)
+    for link in TOSCRAPE:
+        page = webdl(link)
 
-    file_name = os.path.basename(TOSCRAPE)
+        new_list = htmlparsing(page)
+        employees += new_list
+
+        print("Updated NAI with %s" % os.path.basename(link))
+
     data_frame = pandas.DataFrame.from_records(employees)
-    data_frame.to_csv('NAI_%s.csv' % file_name)
+    data_frame.to_csv('NAI_2.csv')
     print('Done')
 
 
 if __name__ == "__main__":
     main()
+
+# TODO Add Threading/Queuing functionality
