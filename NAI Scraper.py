@@ -42,7 +42,7 @@ def searchpageparsing(page):
     return scrapelist
 
 
-def htmlparsing(page):
+def personparsing(page):
 
     locregex = re.compile(r"(?<=Location: ).+(?=\n)")
     specregex = re.compile(r"(?<=Specialties: ).+(?=\n)")
@@ -91,7 +91,7 @@ def main():
     for link in searchpageparsing(search):
         page = webdl(link)
         if page:
-            new_list = htmlparsing(page)
+            new_list = personparsing(page)
             employees += new_list
             print("Updated NAI with %s" % os.path.basename(link))
         else:
