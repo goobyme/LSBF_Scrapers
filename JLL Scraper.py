@@ -4,6 +4,11 @@ import pandas
 import re
 import threading
 
+# TODO REDO ALL IN SELENIUM, WILL BE BASIS FOR FUTURE SELENIUM BUILDS
+#
+#
+#
+
 SEARCHPAGE = 'http://www.us.jll.com/united-states/en-us/people#k=#s='
 THREADCOUNT = 10
 employees = []
@@ -120,8 +125,11 @@ def main():
     print('Done')
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
+
+page = webdl(SEARCHPAGE)
+print(personparsing(page))
 
 # TODO Chang person parsing to look at indv. profile page and id data from description paragraphs (not sure if possible)
 # TODO Improve error handling
