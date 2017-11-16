@@ -74,6 +74,13 @@ def personparsing(page):
     phone_parent = element.find_all('div', {'class': 'locations'})
     phone_text = phone_parent[0].get_text()
     phone = phoneregex.findall(phone_text)
+
+    address_parent = phone_parent[0].find_all('p')
+    address_text = address_parent[0].get_text()
+    e['Address'] = address_text.strip()
+
+    department = phone_parent[0].find_all('h4')[0]
+    e['Department'] = department.get_text()
     try:
         e["Phone"] = phone[0]
     except IndexError:

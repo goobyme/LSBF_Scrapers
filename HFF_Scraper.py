@@ -1,8 +1,9 @@
 import requests
 import bs4
-import pandas
 import re
 import threading
+import os
+
 
 SEARCHPAGE = 'https://www.hfflp.com/our-people/search.aspx?q=*'
 THREADCOUNT = 10
@@ -27,16 +28,12 @@ def searchpageparsing(page):
     scrapelist = []
 
     soup = bs4.BeautifulSoup(page.text, 'lxml')
-    parent_elements = soup.find_all('div', {'class':'col-xs-3 col-sm-3 col-md-2'})
+    parent_elements = soup.find_all('div', {'class':'media-body'})
 
     for element in parent_elements:
-        link_element = element.find('a')
+        link_element = element.find('a', {'class':'media-link-vcard'})
         link = link_element['href']
-
-        try:
-            scrapelist.append(link)
-        except IndexError:
-            print('Search-page link parsing failed')
+        scrapelist.append(link)
 
     return scrapelist
 
@@ -102,49 +99,48 @@ def personparsing(page):
     return es
 
 
-def threadbot(thread_id):
+def threadbot(ident, total_len):
 
-    sublist = []
+    i = 1
     while True:
         llist_lock.acquire()
         if len(link_list) > 0:
             try:
+                length = len(link_list)
                 link = link_list[0]
                 link_list.remove(link)
             finally:
                 llist_lock.release()
-            print('Thread %s parsing %s' % (thread_id, link))
-            sublist += personparsing(webdl(link))
+            print('Thread %s downloading page %s of %s' % (ident, total_len-length, total_len))
+            to_dl = webdl(link)
+            vcf_file = open('hff_vcf_%s_%s.vcf' % (ident, i), 'wb')
+            for chunk in to_dl.iter_content(100000):
+                vcf_file.write(chunk)
+            vcf_file.close()
+            i += 1
         else:
             llist_lock.release()
-            print('Thread %s completed parsing' % thread_id)
+            print('Thread %s completed parsing' % ident)
             break
-
-    elist_lock.acquire()
-    try:
-      global employees
-      employees += sublist
-      print('Thread %s wrote to list' % thread_id)
-    finally:
-        elist_lock.release()
 
 
 def main():
 
+    os.chdir('/mnt/c/Users/Liberty SBF/Desktop/HFF_VCF')
+
     global link_list
     link_list = searchpageparsing(webdl(SEARCHPAGE))
+    startlength = len(link_list)
     threads = []
 
     for i in range(THREADCOUNT):
-        thread = threading.Thread(target=threadbot, args=(i+1, ))
+        thread = threading.Thread(target=threadbot, args=(i+1, startlength, ))
 
         threads.append(thread)
         thread.start()
 
     for thread in threads:
         thread.join()
-
-
     print('Done')
 
 
@@ -152,5 +148,5 @@ if __name__ == "__main__":
     main()
 
 # TODO Improve means of variable manipulation so that blunt global variables + locking process is no longer needed
-# TODO Add progress checking capabilities
+# TODO Improve progress checking capabilities
 # TODO Improve error handling
