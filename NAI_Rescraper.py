@@ -6,8 +6,8 @@ import threading
 import os
 import vobject
 
-SEARCHPAGE = "http://www.savills-studley.com/contact/people-results.aspx?name=&country=3198&office=&sector="
-THREADCOUNT = 10
+SEARCHPAGE = "http://www.naiglobal.com/about-nai"
+THREADCOUNT = 25
 employees = []
 link_list = []
 elist_lock = threading.Lock()
@@ -21,15 +21,13 @@ def webdl(url):
         r = requests.get(url)
         r.raise_for_status()
         return r
-    except requests.HTTPError:
-        try:
-            print('Download failed for %s' % url)
-            return None
-        except BlockingIOError:
-            return None
-    except requests.exceptions.MissingSchema:
+    except:
         print('Download failed for %s' % url)
         return None
+
+    # except requests.exceptions.MissingSchema:
+    #     print('Download failed for %s' % url)
+    #     return None
 
 
 class ParsingOutput:
@@ -42,51 +40,72 @@ class ParsingOutput:
 
 def searchpageparsing(page):
     """Scrapes search page for VCF links or information elements """
-
-    contact_links = []
-    vcf_links = []
+    scrapelist = []
+    linkregex = re.compile(r"(?<=/members/).+")
 
     soup = bs4.BeautifulSoup(page.text, 'lxml')
-    contact_parent = soup.find_all('strong', {'class': 'highlight'})
-    for element in contact_parent:
-        contact_link = element.find('a', href=True)
-        if contact_link:
-            contact_links.append(contact_link['href'])
+    parent_element = soup.find_all('ul', {'region_name': 'North America'})
+    sub_elements = parent_element[0].find_all('ul', {'class': 'regionLocations'})
+    link_elements = sub_elements[1].find_all('a', {'class': 'jt'})  # Note that [1] refers to USA only excluding Canada
 
-    vcf_parent = soup.find_all('span', {'class': 'action_link_business_card'})
-    for element in vcf_parent:
-        vcf_link = element.find('a', href=True)
-        if vcf_link:
-            vcf_links.append(vcf_link['href'].strip('.'))
+    for link in link_elements:
 
-    parse_result = ParsingOutput(contact_links, vcf_links)
+        link_format = linkregex.findall(link['href'])
+        try:
+            link_final = 'http://www.naiglobal.com/members/team/' + link_format[0]
+            scrapelist.append(link_final)
+        except IndexError:
+            print('Search-page link parsing failed')
 
-    return parse_result
+    return scrapelist
+
+
+def employeelistparsing(page):
+    profile_links = []
+    if not page:
+        return None
+    soup = bs4.BeautifulSoup(page.text, 'lxml')
+    elements = soup.find_all('div', {'class': 'tencol agentNTEPcontainer last'})
+    for element in elements:
+        name_parent = element.find('h3')
+        link = name_parent.find('a')
+        profile_links.append(link['href'])
+
+    return profile_links
 
 
 def vcfmuncher(link, thread_ident, file_ident):
     """Scrapes employee page for vcf and downloads it"""
 
-    to_dl = webdl('http://www.savills-studley.com/' + link)
-    file_name = 'Savills_vcf_%s_%s.vcf' % (thread_ident, file_ident)
+    to_dl = webdl('http://www.naiglobal.com/' + link)
+    if not to_dl:
+        return {}
+    file_name = 'NAI_vcf_%s_%s.vcf' % (thread_ident, file_ident)
 
     vcf_file = open(file_name, 'wb')
     for chunk in to_dl.iter_content(100000):
         vcf_file.write(chunk)
     vcf_file.close()
+    vcf_file = open(file_name, 'a')
+    vcf_file.write('\nEND:VCARD')
+    vcf_file.close()
     print('Parsing VCF {}...'.format(file_name))
     try:
-        parse_file = open(file_name, 'r').read()
+        parse_file = open(file_name, 'r')
+        text_file = parse_file.read()
+        parse_file.close()
     except UnicodeDecodeError:
         print('File reading error')
         return {}
 
-    return vcfparsing(parse_file)
+    e = vcfparsing(text_file)
+    return e
 
 
 def vcfparsing(text):
     """Take vcard text contents, return JSON-structured employee."""
     e = {}
+
     vc = vobject.readOne(text)
     e['Prefix'] = vc.n.value.prefix
     e['FirstName'] = vc.n.value.given
@@ -99,16 +118,8 @@ def vcfparsing(text):
         e['Street'] = ', '.join([x.strip()
                                         for x in vc.adr.value.street])
     try:
-        e['City'] = vc.adr.value.city[0]
-    except AttributeError or IndexError:
-        pass
-    try:
         e['PostalCode'] = vc.adr.value.code
     except AttributeError or IndexError:
-        pass
-    try:
-        e['State'] = vc.adr.value.city[1]
-    except:
         pass
     try:
         e['Email'] = vc.email.value
@@ -130,39 +141,44 @@ def vcfparsing(text):
     return e
 
 
-def personparsing(page, link, vcf_link):
+def personparsing(page, thread_ident, file_ident):
     """Parses text data from elements (not entire page) and outputs list of dictionaries with data"""
-    es = []
     try:
         soup = bs4.BeautifulSoup(page.text, 'lxml')
     except AttributeError:
         return None
-    parent_el = soup.find('div', {'id': 'left_navigation_container'})
-    e = {}
 
-    if parent_el:
-        name_el = parent_el.find('h1')
-        e['Name'] = name_el.get_text()
+    linkedinregex = re.compile(r'linkedin\.com')
+    vcf_parent = soup.find('span', {'id': 'dnn_lblVCardLink'})
+    vcf_el = vcf_parent.find('a')
+    if vcf_el:
+        vcf_link = vcf_el['href']
+        e = vcfmuncher(vcf_link, thread_ident, file_ident)
+    else:
+        print('VCF link could not be found')
+        return None
 
-        linkedin_el = parent_el.find('div', {'class': 'vx_block studley_linkedin'})
-        if linkedin_el:
-            li_link = linkedin_el.find('a')
-            if li_link:
-                e['LinkedIn'] = li_link['href']
+    city_el = soup.find('span', {'id': 'dnn_lblCityRegion'})
+    if city_el:
+        e['City'] = city_el.text
 
-        specs =[]
-        spec_el = parent_el.find_all('div', {'class': 'vx_block research_container_menu one_half'})
-        if spec_el:
-            for element in spec_el:
-                try:
-                    text = element.find('a').get_text()
-                    specs.append(text + ', ')
-                except AttributeError:
-                    continue
-            e['Specialities'] = specs
+    state_el = soup.find('span', {'id': 'dnn_lblStateProvince'})
+    if state_el:
+        e['State'] = state_el.text
 
-    e['Profile Link'] = link
-    e['VCF Link'] = vcf_link
+    spec_el = soup.find('span', {'id': 'dnn_ctr911_agentprofile_lblSpecialtyList'})
+    if spec_el:
+        spec = spec_el.get_text()
+        e['Specialities'] = spec
+
+    linked_el = soup.find('div', {'class': 'center dsmContainerAprofile'})
+    try:
+        links = linked_el.find_all('a', href=True)
+        for link in links:
+            if linkedinregex.findall(link['href']):
+                e['LinkedIn'] = link['href']
+    except AttributeError:
+        pass
 
     return e
 
@@ -171,7 +187,7 @@ def threadbot(ident, total_len):
     """Reads global list_link for link to parse then parses adding output to sublist or downloading vcf"""
     print('Thread %s Initialized' % ident)
     sublist = []
-    exportlist = []
+    i =1
     while True:
         llist_lock.acquire()
         if len(link_list) > 0:
@@ -182,40 +198,32 @@ def threadbot(ident, total_len):
             finally:
                 llist_lock.release()
             print('Thread %s parsing link %s of %s' % (ident, total_len - length, total_len))
-            sp_parse = searchpageparsing(webdl(link))
-            for n in range(len(sp_parse.scrape)):
-                link = sp_parse.scrape[n]
-                # Associate each vlc link to a name arbitrarily (will adjust if not every employee has a vcard)
-                sublist.append(personparsing(webdl(link), link, sp_parse.vlc_links[n]))
+            employee_links = employeelistparsing(webdl(link))
+            if not employee_links:
+                break
+            for link in employee_links:
+                profile = personparsing(webdl(link), ident, i)
+                sublist.append(profile)
+                i += 1
         else:
             llist_lock.release()
             print('Thread %s completed parsing' % ident)
             break
 
-    print('Thread %s downloading vcf...' % ident)
-    sublist = filter(None, sublist)
-    i = 1
-    for profile in sublist:
-        scraped_dic = vcfmuncher(profile['VCF Link'], ident, i)
-        profile.update(scraped_dic)
-        exportlist.append(profile)
-        i += 1
-
     print('Thread %s writing to list...' % ident)
     elist_lock.acquire()
     try:
         global employees
-        employees += exportlist
+        employees += sublist
     finally:
         elist_lock.release()
 
 
 def main():
-    os.chdir('/mnt/c/Users/Liberty SBF/Desktop/Savills_VCF')
+    os.chdir('/mnt/c/Users/Liberty SBF/Desktop/NAI_VCF')
     global employees
     global link_list
-    for i in range(55):
-        link_list.append(SEARCHPAGE + '&page=%s' % str(i+1))
+    link_list = searchpageparsing(webdl(SEARCHPAGE))
     startlength = len(link_list)
     threads = []
 
@@ -229,7 +237,7 @@ def main():
         thread.join()
     to_save = filter(None, employees)   # Gets rid of NoneTypes in list (very annoying if you don't do this!)
     data_frame = pandas.DataFrame.from_records(to_save)
-    data_frame.to_csv('SavillsStudley.csv')
+    data_frame.to_csv('NAI_Rescrape.csv')
     print('Done')
 
 

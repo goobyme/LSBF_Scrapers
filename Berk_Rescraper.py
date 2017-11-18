@@ -68,7 +68,7 @@ def personparsing(page):
 
     loc_parent = element.find_all('div', {'class': 'primary-location'})
     loc = loc_parent[0].find_all('a')
-    location = loc[0].get_text()
+    location = loc[0].text
     e["Location"] = location.strip()
 
     phone_parent = element.find_all('div', {'class': 'locations'})
@@ -76,8 +76,12 @@ def personparsing(page):
     phone = phoneregex.findall(phone_text)
 
     address_parent = phone_parent[0].find_all('p')
-    address_text = address_parent[0].get_text()
-    e['Address'] = address_text.strip()
+    address_text = str(address_parent[0])
+    formatted_text = address_text.replace('\n', '')
+    formatted_text = formatted_text.replace('<p>', '')
+    formatted_text = formatted_text.replace('<br/>', ', ')
+    formatted_text = formatted_text.replace('</p>', '')
+    e['Address'] = formatted_text
 
     department = phone_parent[0].find_all('h4')[0]
     e['Department'] = department.get_text()
