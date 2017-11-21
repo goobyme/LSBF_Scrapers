@@ -15,7 +15,7 @@ llist_lock = threading.Lock()
 
 
 def webdl(url):
-    """Downloads web-page (using requests rather than urllib) """
+    """Downloads web-page (using requests rather than urllib), returns None if failed (common!)"""
     print('Downloading...%s' % url)
     try:
         r = requests.get(url)
@@ -39,7 +39,9 @@ class ParsingOutput:
 
 
 def searchpageparsing(page):
-    """Scrapes search page for VCF links or information elements """
+    """Scrapes search page for individual parsing links to feed into threadbot system (not needed if pages # in url)"""
+    if not page:    # Failed webdl handling
+        return None
     scrapelist = []
     linkregex = re.compile(r"(?<=/members/).+")
 
@@ -61,9 +63,10 @@ def searchpageparsing(page):
 
 
 def employeelistparsing(page):
-    profile_links = []
-    if not page:
+    """Parses each indv. profile listing page to return specific person list, use in lieu of SPP if long list"""
+    if not page:    # Handling failed webdl
         return None
+    profile_links = []
     soup = bs4.BeautifulSoup(page.text, 'lxml')
     elements = soup.find_all('div', {'class': 'tencol agentNTEPcontainer last'})
     for element in elements:
@@ -75,11 +78,11 @@ def employeelistparsing(page):
 
 
 def vcfmuncher(link, thread_ident, file_ident):
-    """Scrapes employee page for vcf and downloads it"""
+    """Scrapes employee page for vcf and downloads it then feeds through parser to return employee profile dic"""
 
     to_dl = webdl('http://www.naiglobal.com/' + link)
-    if not to_dl:
-        return {}
+    if not to_dl:   # Handle webdl failure
+        return None
     file_name = 'NAI_vcf_%s_%s.vcf' % (thread_ident, file_ident)
 
     vcf_file = open(file_name, 'wb')
@@ -90,20 +93,21 @@ def vcfmuncher(link, thread_ident, file_ident):
     vcf_file.write('\nEND:VCARD')
     vcf_file.close()
     print('Parsing VCF {}...'.format(file_name))
-    try:
+    try:    # Handle Unicode/read error
         parse_file = open(file_name, 'r')
         text_file = parse_file.read()
         parse_file.close()
     except UnicodeDecodeError:
         print('File reading error')
-        return {}
+        return None
 
     e = vcfparsing(text_file)
     return e
 
 
 def vcfparsing(text):
-    """Take vcard text contents, return JSON-structured employee."""
+    """Take vcard text contents, return JSON-structured employee. Try funcitons really are necessary :("""
+    # TODO replace with a hand-made regex b/c seriously vobject sucks and is poorly documented
     e = {}
 
     vc = vobject.readOne(text)
@@ -142,22 +146,24 @@ def vcfparsing(text):
 
 
 def personparsing(page, thread_ident, file_ident):
-    """Parses text data from elements (not entire page) and outputs list of dictionaries with data"""
-    try:
+    """Parses from some combination of vcf and page and outputs list of dictionaries (iterate outside of func)"""
+    try:    # Handle empty webdl failure
         soup = bs4.BeautifulSoup(page.text, 'lxml')
     except AttributeError:
         return None
 
     linkedinregex = re.compile(r'linkedin\.com')
+    """VCF parsing subsection, kills early if vcf parse fails"""
     vcf_parent = soup.find('span', {'id': 'dnn_lblVCardLink'})
     vcf_el = vcf_parent.find('a')
-    if vcf_el:
+    if vcf_el:  # Handle failed vcf (possible fail points: webdl or File read error)
         vcf_link = vcf_el['href']
         e = vcfmuncher(vcf_link, thread_ident, file_ident)
     else:
-        print('VCF link could not be found')
+        print('VCF link could not be downloaded/parsed')
         return None
 
+    """Page parsing subsection, expand/comment out as needed"""
     city_el = soup.find('span', {'id': 'dnn_lblCityRegion'})
     if city_el:
         e['City'] = city_el.text
@@ -172,7 +178,7 @@ def personparsing(page, thread_ident, file_ident):
         e['Specialities'] = spec
 
     linked_el = soup.find('div', {'class': 'center dsmContainerAprofile'})
-    try:
+    try:    # TODO clean this up b/c linkedin will fail too often for this to be efficient
         links = linked_el.find_all('a', href=True)
         for link in links:
             if linkedinregex.findall(link['href']):
@@ -184,10 +190,10 @@ def personparsing(page, thread_ident, file_ident):
 
 
 def threadbot(ident, total_len):
-    """Reads global list_link for link to parse then parses adding output to sublist or downloading vcf"""
+    """Reads global list_link for link to parse then parses to generate profile sublists , then merges with master"""
     print('Thread %s Initialized' % ident)
     sublist = []
-    i =1
+    i =1    # For VCF file naming
     while True:
         llist_lock.acquire()
         if len(link_list) > 0:
@@ -199,11 +205,11 @@ def threadbot(ident, total_len):
                 llist_lock.release()
             print('Thread %s parsing link %s of %s' % (ident, total_len - length, total_len))
             employee_links = employeelistparsing(webdl(link))
-            if not employee_links:
+            if not employee_links:  # Handling empty employee links page
                 break
             for link in employee_links:
                 profile = personparsing(webdl(link), ident, i)
-                sublist.append(profile)
+                sublist.append(profile)  # May return None values (will be filtered in main)
                 i += 1
         else:
             llist_lock.release()
@@ -224,6 +230,9 @@ def main():
     global employees
     global link_list
     link_list = searchpageparsing(webdl(SEARCHPAGE))
+    if not link_list:   # Handle early error in searchpage
+        print('Search page parsing failed. No link list generated. Closing scraper')
+        return None
     startlength = len(link_list)
     threads = []
 
@@ -244,6 +253,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+# TODO PEP 8 cleanup (ie .format methods)
 # TODO Improve means of variable manipulation so that blunt global variables + locking process is no longer needed
 # TODO Add Time checking capabilities
 # TODO Improve error handling
