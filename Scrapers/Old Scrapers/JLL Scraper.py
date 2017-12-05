@@ -5,11 +5,12 @@ import re
 import threading
 import os
 import vobject
+import shelve
 
 SEARCHPAGE = "https://www.cbcworldwide.com/professionals/profile/A2E3B313-AD7E-435C-86B8-905EF0B23428#h=2mGrlX-1"
 THREADCOUNT = 20
 employees = []
-link_list = []
+init_proto_profile_list = []
 elist_lock = threading.Lock()
 llist_lock = threading.Lock()
 
@@ -161,13 +162,13 @@ def vcfparsing(text):
     return e
 
 
-def personparsing(page, thread_ident, file_ident, link):
+def personparsing(page, thread_ident, file_ident, profile):
     """Parses from some combination of vcf and page and outputs list of dictionaries (iterate outside of func)"""
     try:    # Handle empty webdl failure
         soup = bs4.BeautifulSoup(page.text, 'lxml')
     except AttributeError:
         return None
-    e = {}
+    e = profile
     """VCF parsing subsection, kills early if vcf parse fails"""
     # vcf_parent = soup.find('a', {'data-ga-click-action': 'download-professional-v-card'})
     # vcf_el = vcf_parent['href']
@@ -182,27 +183,27 @@ def personparsing(page, thread_ident, file_ident, link):
 
     """Page parsing subsection, expand/comment out as needed"""
     parent_el = soup.find('div', {'class': 'sidebar profile'})
-    name_el = parent_el.find('h2')
-    if name_el:
-        e['Name'] = name_el.text
+    # name_el = parent_el.find('h2')
+    # if name_el:
+    #     e['Name'] = name_el.text
     title_el = parent_el.find('h3')
     if title_el:
-        e['Title'] = title_el.text
+        e['Title'] = title_el.get_text().strip()
     phone_el = parent_el.find('p', {'class': 'phone'})
     if phone_el:
-            e['Phone'] = phone_el.text
+            e['Phone'] = phone_el.get_text().strip()
     email_el = parent_el.find('p', {'class': 'email'})
     if email_el:
-        e['Email'] = email_el.get_text()
+        e['Email'] = email_el.get_text().strip()
 
     address_parent = parent_el.find('p', {'class': 'bio-address'})
     if address_parent:
         address_1 = address_parent.find('span', {'class': 'bio-address-line1'})
         if address_1:
-            e['Address Line 1'] = address_1.text
+            e['Address Line 1'] = address_1.get_text()
         address_2 = address_parent.find('span', {'class': 'bio-address-line2'})
         if address_2:
-            e['Address Line 2'] = address_2.text
+            e['Address Line 2'] = address_2.get_text().strip()
         city_el = address_parent.find('span', {'class': 'bio-address-city'})
         if city_el:
             e['City'] = city_el.text
@@ -213,8 +214,6 @@ def personparsing(page, thread_ident, file_ident, link):
         if postal_el:
             e['PostalCode'] = postal_el.text
 
-    e['Profile Link'] = link
-
     return e
 
 
@@ -222,21 +221,22 @@ def threadbot(ident, total_len):
     """Reads global list_link for link to parse then parses to generate profile sublists , then merges with master"""
     print('Threadbot {} Initialized'.format(ident))
     sublist = []
-    i =1    # For VCF file naming
+    i = 1    # For VCF file naming
     while True:
         llist_lock.acquire()
-        if len(link_list) > 0:
+        if len(init_proto_profile_list) > 0:
             try:
-                link = link_list[0]
-                link_list.remove(link)
-                length = len(link_list)
+                profile = init_proto_profile_list[0]
+                init_proto_profile_list.remove(profile)
+                length = len(init_proto_profile_list)
             finally:
                 llist_lock.release()
             print('Thread {} parsing link {} of {}'.format(ident, total_len - length, total_len))
-            # TODO enter in profile page links via list created by JLL Helper
-
-            link = 'http://www.us.jll.com' + link
-            profile = personparsing(webdl(link), ident, i, link)
+            try:
+                link = profile['Link']
+            except IndexError:
+                continue
+            profile = personparsing(webdl(link), ident, i, profile)
             sublist.append(profile)  # May return None values (will be filtered in main)
             i += 1
         else:
@@ -254,12 +254,13 @@ def threadbot(ident, total_len):
 
 
 def main():
-    os.chdir('/mnt/c/Users/Liberty SBF/Desktop/Coldwell_VCF')
     global employees
-    global link_list
-    for i in range(181):
-        link = 'https://www.cbcworldwide.com/professionals/find/page?page={}'.format(i+1)
-        link_list.append(link)
+    global init_proto_profile_list
+    # os.chdir('/mnt/c/Users/Liberty SBF/PycharmProjects/Small_Scripts/Scrapers/Helper Dump')
+    os.chdir('C:\\Users\\Liberty SBF\\PycharmProjects\\Small_Scripts\\Scrapers\\Helper Dump')
+    shelf_file = shelve.open('JLL_Links')
+    for i in range(1, 34):
+        link_list += shelf_file[str(i)]
     if not link_list:   # Handle early error in searchpage
         print('Search page parsing failed. No link list generated. Closing scraper')
         return None

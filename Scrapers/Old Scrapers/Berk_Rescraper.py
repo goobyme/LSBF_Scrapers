@@ -10,7 +10,7 @@ requests.packages.urllib3.disable_warnings()
 SEARCHPAGE = 'https://www.berkadia.com/people-and-locations/people/'
 THREADCOUNT = 10
 employees = []
-link_list = []
+init_proto_profile_list = []
 elist_lock = threading.Lock()
 llist_lock = threading.Lock()
 
@@ -68,12 +68,23 @@ def personparsing(page):
 
     loc_parent = element.find_all('div', {'class': 'primary-location'})
     loc = loc_parent[0].find_all('a')
-    location = loc[0].get_text()
+    location = loc[0].text
     e["Location"] = location.strip()
 
     phone_parent = element.find_all('div', {'class': 'locations'})
     phone_text = phone_parent[0].get_text()
     phone = phoneregex.findall(phone_text)
+
+    address_parent = phone_parent[0].find_all('p')
+    address_text = str(address_parent[0])
+    formatted_text = address_text.replace('\n', '')
+    formatted_text = formatted_text.replace('<p>', '')
+    formatted_text = formatted_text.replace('<br/>', ', ')
+    formatted_text = formatted_text.replace('</p>', '')
+    e['Address'] = formatted_text
+
+    department = phone_parent[0].find_all('h4')[0]
+    e['Department'] = department.get_text()
     try:
         e["Phone"] = phone[0]
     except IndexError:
@@ -112,10 +123,10 @@ def threadbot(thread_id):
     sublist = []
     while True:
         llist_lock.acquire()
-        if len(link_list) > 0:
+        if len(init_proto_profile_list) > 0:
             try:
-                link = link_list[0]
-                link_list.remove(link)
+                link = init_proto_profile_list[0]
+                init_proto_profile_list.remove(link)
             finally:
                 llist_lock.release()
             print('Thread %s parsing %s' % (thread_id, link))
@@ -137,7 +148,7 @@ def threadbot(thread_id):
 def main():
 
     global employees
-    global link_list
+    global init_proto_profile_list
     link_list = searchpageparsing(webdl(SEARCHPAGE))
     threads = []
 

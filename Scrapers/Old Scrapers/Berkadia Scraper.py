@@ -1,20 +1,24 @@
 import requests
 import bs4
+import pandas
 import re
 import threading
-import os
 
+import requests.packages.urllib3
+requests.packages.urllib3.disable_warnings()
 
-SEARCHPAGE = 'https://www.hfflp.com/our-people/search.aspx?q=*'
+SEARCHPAGE = 'https://www.berkadia.com/people-and-locations/people/'
 THREADCOUNT = 10
-link_list = []
+employees = []
+init_proto_profile_list = []
+elist_lock = threading.Lock()
 llist_lock = threading.Lock()
 
 
 def webdl(url):
     """Downloads web-page (using requests rather than urllib) """
     print('Downloading...%s' % url)
-    r = requests.get(url)
+    r = requests.get(url, verify=False)
     try:
         r.raise_for_status()
         return r
@@ -28,12 +32,16 @@ def searchpageparsing(page):
     scrapelist = []
 
     soup = bs4.BeautifulSoup(page.text, 'lxml')
-    parent_elements = soup.find_all('div', {'class':'media-body'})
+    parent_elements = soup.find_all('div', {'class': 'col-xs-3 col-sm-3 col-md-2'})
 
     for element in parent_elements:
-        link_element = element.find('a', {'class':'media-link-vcard'})
+        link_element = element.find('a')
         link = link_element['href']
-        scrapelist.append(link)
+
+        try:
+            scrapelist.append(link)
+        except IndexError:
+            print('Search-page link parsing failed')
 
     return scrapelist
 
@@ -99,48 +107,50 @@ def personparsing(page):
     return es
 
 
-def threadbot(ident, total_len):
+def threadbot(thread_id):
 
-    i = 1
+    sublist = []
     while True:
         llist_lock.acquire()
-        if len(link_list) > 0:
+        if len(init_proto_profile_list) > 0:
             try:
-                length = len(link_list)
-                link = link_list[0]
-                link_list.remove(link)
+                link = init_proto_profile_list[0]
+                init_proto_profile_list.remove(link)
             finally:
                 llist_lock.release()
-            print('Thread %s downloading page %s of %s' % (ident, total_len-length, total_len))
-            to_dl = webdl(link)
-            vcf_file = open('hff_vcf_%s_%s.vcf' % (ident, i), 'wb')
-            for chunk in to_dl.iter_content(100000):
-                vcf_file.write(chunk)
-            vcf_file.close()
-            i += 1
+            print('Thread %s parsing %s' % (thread_id, link))
+            sublist += personparsing(webdl(link))
         else:
             llist_lock.release()
-            print('Thread %s completed parsing' % ident)
+            print('Thread %s completed parsing' % thread_id)
             break
+
+    elist_lock.acquire()
+    try:
+        global employees
+        employees += sublist
+        print('Thread %s wrote to list' % thread_id)
+    finally:
+        elist_lock.release()
 
 
 def main():
 
-    os.chdir('/mnt/c/Users/Liberty SBF/Desktop/HFF_VCF')
-
-    global link_list
+    global employees
+    global init_proto_profile_list
     link_list = searchpageparsing(webdl(SEARCHPAGE))
-    startlength = len(link_list)
     threads = []
 
     for i in range(THREADCOUNT):
-        thread = threading.Thread(target=threadbot, args=(i+1, startlength, ))
+        thread = threading.Thread(target=threadbot, args=(i+1, ))
 
         threads.append(thread)
         thread.start()
 
     for thread in threads:
         thread.join()
+    data_frame = pandas.DataFrame.from_records(employees)
+    data_frame.to_csv('Berkadia.csv')
     print('Done')
 
 
@@ -148,5 +158,5 @@ if __name__ == "__main__":
     main()
 
 # TODO Improve means of variable manipulation so that blunt global variables + locking process is no longer needed
-# TODO Improve progress checking capabilities
+# TODO Add progress checking capabilities
 # TODO Improve error handling

@@ -10,7 +10,7 @@ os.chdir('/mnt/c/Users/Liberty SBF/PycharmProjects')
 SEARCHPAGE = 'https://www.transwestern.com/bio?email='
 THREADCOUNT = 20
 employees = []
-link_list = []
+init_proto_profile_list = []
 elist_lock = threading.Lock()
 llist_lock = threading.Lock()
 
@@ -62,10 +62,10 @@ def threadbot(thread_id):
     sublist = []
     while True:
         llist_lock.acquire()
-        if len(link_list) > 0:
+        if len(init_proto_profile_list) > 0:
             try:
-                link = link_list[0]
-                link_list.remove(link)
+                link = init_proto_profile_list[0]
+                init_proto_profile_list.remove(link)
             finally:
                 llist_lock.release()
             print('Thread %s parsing %s' % (thread_id, link))
@@ -85,7 +85,7 @@ def threadbot(thread_id):
 
 
 def main():
-    global link_list
+    global init_proto_profile_list
     global employees
     threads = []
     email_list = excelreader('Transwestern.xlsx')

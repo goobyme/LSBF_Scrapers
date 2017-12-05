@@ -7,7 +7,7 @@ import os
 SEARCHPAGE = 'https://www.transwestern.com/ourcompany/locations'
 COMPANYFUNCTIONS = ['Agency%20Leasing', 'Tenant%20Advisory', 'Capital%20Markets', 'Asset%20Services', 'Sustainability']
 THREADCOUNT = 10
-link_list = []
+init_proto_profile_list = []
 llist_lock = threading.Lock()
 
 
@@ -77,11 +77,11 @@ def threadbot(ident, total_len):
     i = 1
     while True:
         llist_lock.acquire()
-        if len(link_list) > 0:
+        if len(init_proto_profile_list) > 0:
             try:
-                length = len(link_list)
-                link = link_list[0]
-                link_list.remove(link)
+                length = len(init_proto_profile_list)
+                link = init_proto_profile_list[0]
+                init_proto_profile_list.remove(link)
             finally:
                 llist_lock.release()
             print('Thread %s downloading page %s of %s' % (ident, total_len-length, total_len))
@@ -114,7 +114,7 @@ def main():
 
     os.chdir('/mnt/c/Users/Liberty SBF/Desktop/Transwestern_VCF')
 
-    global link_list
+    global init_proto_profile_list
     link_list = searchpageparsing(webdl(SEARCHPAGE), 'a', {'class': 'OpenSansBlue18'})
     startlength = len(link_list)
     threads = []

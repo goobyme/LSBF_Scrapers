@@ -9,7 +9,7 @@ import vobject
 SEARCHPAGE = "http://www.savills-studley.com/contact/people-results.aspx?name=&country=3198&office=&sector="
 THREADCOUNT = 10
 employees = []
-link_list = []
+init_proto_profile_list = []
 elist_lock = threading.Lock()
 llist_lock = threading.Lock()
 
@@ -174,11 +174,11 @@ def threadbot(ident, total_len):
     exportlist = []
     while True:
         llist_lock.acquire()
-        if len(link_list) > 0:
+        if len(init_proto_profile_list) > 0:
             try:
-                link = link_list[0]
-                link_list.remove(link)
-                length = len(link_list)
+                link = init_proto_profile_list[0]
+                init_proto_profile_list.remove(link)
+                length = len(init_proto_profile_list)
             finally:
                 llist_lock.release()
             print('Thread %s parsing link %s of %s' % (ident, total_len - length, total_len))
@@ -213,7 +213,7 @@ def threadbot(ident, total_len):
 def main():
     os.chdir('/mnt/c/Users/Liberty SBF/Desktop/Savills_VCF')
     global employees
-    global link_list
+    global init_proto_profile_list
     for i in range(55):
         link_list.append(SEARCHPAGE + '&page=%s' % str(i+1))
     startlength = len(link_list)

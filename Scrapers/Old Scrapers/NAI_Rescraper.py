@@ -9,7 +9,7 @@ import vobject
 SEARCHPAGE = "http://www.naiglobal.com/about-nai"
 THREADCOUNT = 25
 employees = []
-link_list = []
+init_proto_profile_list = []
 elist_lock = threading.Lock()
 llist_lock = threading.Lock()
 
@@ -196,11 +196,11 @@ def threadbot(ident, total_len):
     i =1    # For VCF file naming
     while True:
         llist_lock.acquire()
-        if len(link_list) > 0:
+        if len(init_proto_profile_list) > 0:
             try:
-                link = link_list[0]
-                link_list.remove(link)
-                length = len(link_list)
+                link = init_proto_profile_list[0]
+                init_proto_profile_list.remove(link)
+                length = len(init_proto_profile_list)
             finally:
                 llist_lock.release()
             print('Thread %s parsing link %s of %s' % (ident, total_len - length, total_len))
@@ -228,7 +228,7 @@ def threadbot(ident, total_len):
 def main():
     os.chdir('/mnt/c/Users/Liberty SBF/Desktop/NAI_VCF')
     global employees
-    global link_list
+    global init_proto_profile_list
     link_list = searchpageparsing(webdl(SEARCHPAGE))
     if not link_list:   # Handle early error in searchpage
         print('Search page parsing failed. No link list generated. Closing scraper')

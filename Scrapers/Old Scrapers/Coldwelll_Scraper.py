@@ -9,7 +9,7 @@ import vobject
 SEARCHPAGE = "https://www.cbcworldwide.com/professionals/profile/A2E3B313-AD7E-435C-86B8-905EF0B23428#h=2mGrlX-1"
 THREADCOUNT = 20
 employees = []
-link_list = []
+init_proto_profile_list = []
 elist_lock = threading.Lock()
 llist_lock = threading.Lock()
 
@@ -215,11 +215,11 @@ def threadbot(ident, total_len):
     i =1    # For VCF file naming
     while True:
         llist_lock.acquire()
-        if len(link_list) > 0:
+        if len(init_proto_profile_list) > 0:
             try:
-                link = link_list[0]
-                link_list.remove(link)
-                length = len(link_list)
+                link = init_proto_profile_list[0]
+                init_proto_profile_list.remove(link)
+                length = len(init_proto_profile_list)
             finally:
                 llist_lock.release()
             print('Thread {} parsing link {} of {}'.format(ident, total_len - length, total_len))
@@ -248,7 +248,7 @@ def threadbot(ident, total_len):
 def main():
     os.chdir('/mnt/c/Users/Liberty SBF/Desktop/Coldwell_VCF')
     global employees
-    global link_list
+    global init_proto_profile_list
     for i in range(181):
         link = 'https://www.cbcworldwide.com/professionals/find/page?page={}'.format(i+1)
         link_list.append(link)
