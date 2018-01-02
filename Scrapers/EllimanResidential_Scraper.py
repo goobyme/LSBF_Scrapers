@@ -7,8 +7,7 @@ import os
 import vobject
 import codecs
 import logging
-import shelve
-
+from functools import wraps
 THREADCOUNT = 20
 SEARCHPAGE = 'https://www.elliman.com/agents'
 employees = []
@@ -18,10 +17,10 @@ elist_lock = threading.Lock()
 llist_lock = threading.Lock()
 
 
-def webdl(url):
+def webdl(url, retries=3):
     """Downloads web-page, retries on initial failures, returns None if fails thrice (common!)"""
     print('Downloading...{}'.format(url))
-    for i in range(3):
+    for i in range(retries):
         try:
             r = requests.get(url)
             r.raise_for_status()
@@ -33,10 +32,20 @@ def webdl(url):
     return None
 
 
+def inputvalidation(f):
+    @wraps(f)
+    def checkfornone(*args, **kwargs):
+        for arg in args:
+            if not arg:
+                return None
+            else:
+                return f(*arg, **kwargs)
+    return checkfornone
+
+
+@inputvalidation
 def searchpageparsing(page):
     """Scrapes search page for individual parsing links to feed into threadbot system (not needed if pages # in url)"""
-    if not page:    # Failed webdl handling
-        return None
     employeepage_links = []
 
     soup = bs4.BeautifulSoup(page.text, 'lxml')
@@ -60,15 +69,12 @@ def searchpageparsing(page):
                 link = sub_el['href']
                 employeepage_links.append(link)
 
-
     return employeepage_links
 
 
+@inputvalidation
 def employeelistparsing(page, thread_ident):
     """Parses each indv. profile listing page to return proto-profiles to be filled by visiting profile pages """
-    if not page:    # Handling failed webdl
-        return None
-
     proto_profiles = []
     soup = bs4.BeautifulSoup(page.text, 'lxml')
 
@@ -198,9 +204,8 @@ def vcfparsing(text, thread_ident):
     return e
 
 
+@inputvalidation
 def propertyhunter(page, type):
-    if not page:    # Handling failed webdl
-        return None
     soup = bs4.BeautifulSoup(page.text, 'lxml')
     if type == 'C':
         prop_el = soup.find_all('td', {'class': 'last'})
@@ -222,7 +227,6 @@ def propertyhunter(page, type):
 
 def personparsing(page, thread_ident, profile, etype):
     """Parses from some combination of vcf and page and outputs json (to be iterated outside of func)"""
-
     try:    # Handle empty webdl failure
         soup = bs4.BeautifulSoup(page.text, 'lxml')
     except AttributeError:
@@ -310,9 +314,9 @@ def personparsing(page, thread_ident, profile, etype):
 
 def threadbot(ident, total_len):
     """Reads global list_link for link to parse then parses to generate profile sublists , then merges with master"""
-
     print('Threadbot {} Initialized'.format(ident))
     sublist = []
+
     """Iterated function over global list with hand-coded queueing"""
     # TODO integrate built in Queue functionality into threadbot
     while True:
@@ -367,8 +371,7 @@ def threadbot(ident, total_len):
 
 
 def main():
-    os.chdir('/mnt/c/Users/James/Desktop/Elliman_VCF')
-    # os.chdir('C:\\Users\\James\\Desktop\\Elliman_VCF')
+    os.chdir('C:\\Users\\James\\Desktop\\Elliman_VCF')
     global employees
     global init_proto_profile_list
     init_proto_profile_list = searchpageparsing(webdl(SEARCHPAGE))

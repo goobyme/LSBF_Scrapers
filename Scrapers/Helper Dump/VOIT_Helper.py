@@ -41,19 +41,22 @@ def core(browser, pageno):
     print('Parsed search-page: {}'.format(pageno))
     if pageno < 9:
         try:
-            next_page_el = browser.find_element_by_id('ctl00_ContentPlaceHolder4_C004_rlvResults_RadDataPager1_ctl02_NextButton')
+            next_page_el = browser.find_element_by_id(
+                'ctl00_ContentPlaceHolder4_C004_rlvResults_RadDataPager1_ctl02_NextButton')
             next_page_el.click()
         except common.exceptions.NoSuchElementException:
             return None
     elif pageno == 9:
         try:
-            next_page_el = browser.find_element_by_id('ctl00_ContentPlaceHolder4_C004_rlvResults_RadDataPager1_ctl02_LastButton')
+            next_page_el = browser.find_element_by_id(
+                'ctl00_ContentPlaceHolder4_C004_rlvResults_RadDataPager1_ctl02_LastButton')
             next_page_el.click()
         except common.exceptions.NoSuchElementException:
             return None
     else:
         try:
-            next_page_el = browser.find_element_by_id('ctl00_ContentPlaceHolder4_C004_rlvResults_RadDataPager1_ctl00_PrevButton')
+            next_page_el = browser.find_element_by_id(
+                'ctl00_ContentPlaceHolder4_C004_rlvResults_RadDataPager1_ctl00_PrevButton')
             next_page_el.click()
         except common.exceptions.NoSuchElementException:
             return None
