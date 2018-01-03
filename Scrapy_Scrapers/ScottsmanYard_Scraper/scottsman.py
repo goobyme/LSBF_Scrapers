@@ -9,6 +9,8 @@ class ScottSpider(scrapy.Spider):
     def parse(self, response):
         self.log('Scraping {}...'.format_map(response.url))
         yield {
-            response.css
+            response.css()
         }
 
+    def newpage(self):
+        pass

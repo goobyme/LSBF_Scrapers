@@ -257,7 +257,7 @@ def main():
     global employees
     global init_proto_profile_list
     # os.chdir('/mnt/c/Users/Liberty SBF/PycharmProjects/Small_Scripts/Scrapers/Helper Dump')
-    os.chdir('C:\\Users\\Liberty SBF\\PycharmProjects\\Small_Scripts\\Primitve_Scrapers\\Helper Dump')
+    os.chdir('C:\\Users\\Liberty SBF\\PycharmProjects\\LSBF_Scrapers\\Primitve_Scrapers\\Helper Dump')
     shelf_file = shelve.open('JLL_Links')
     for i in range(1, 34):
         link_list += shelf_file[str(i)]
