@@ -1,20 +1,18 @@
 import scrapy
-from scrapy.crawler import CrawlerProcess
 import re
+import csv
 
 
 class ScottSpider(scrapy.Spider):
-    name = "scottsman"
+    name = 'findata'
     allowed_domains = ["scotsmanguide.com"]
-    start_urls = ['http://www.scotsmanguide.com/Commercial/Directories/Lender/']
+    start_urls = []
+    with open('/mnt/c/Users/James/PycharmProjects/LSBF_Scrapers/Scrapy_Scrapers/lendata.csv', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            start_urls.append(row['link'])
 
     def parse(self, response):
-        self.log('Scraping {}...'.format(response.url))
-        for link in response.css('a.DirLenderBodyText::attr(href)').extract():
-            link = response.urljoin(link)
-            yield scrapy.Request(url=link, callback=self.parse_details)
-
-    def parse_details(self, response):
         self.log('Scraping Detail Page {}...'.format(response.url))
         idregex = re.compile(r"(?<==)\d+$")
         lend_id = idregex.findall(response.url)[0]
@@ -25,35 +23,36 @@ class ScottSpider(scrapy.Spider):
             'Company Name': response.css('td.widehalf_FWSNAME > span > strong::text').extract_first(),
             'Company Email': response.css('td.widehalf_FWSNAME > a[title="Lender Email Address"]::text').extract_first(),
             'Company Website': response.css('td.widehalf_FWSNAME > a#LenderDetail_hreWeb::attr(href)').extract_first(),
-            'Company Phone': to_splice[2].replace('Phone:', ''),
             'Street Address': to_splice[0],
-            'Comments': response.css('td[colspan="2"]::text').extract()[1],
+            'Comments': response.css('td[colspan="2"]::text').extract()[2],
             'City': spliced[0].strip(),
-            'State': spliced[1].strip(),
-            'Postal Code': spliced[2].strip(),
+            'State': spliced[1].strip()
         }
+        try:
+            company['Company Phone'] = to_splice[2].replace('Phone:', '')
+        except IndexError:
+            pass
+        try:
+            company['Postal Code'] = spliced[2].strip()
+        except IndexError:
+            pass
 
         matrix_id = response.css('img.imMatrix::attr(title)').extract()
         ref = {'Commercial': '49', 'Hard Money':'51', 'Multifamily': '50', 'Construction': '52'}
+        url_list = []
         for item in matrix_id:
             parse_id = ref.setdefault(item, '49')
-            company['Finance URL_{}'.format(item)] = """
-                    http://www.scotsmanguide.com/rsPopDefault.aspx?ucAdd=1001&MTXID={}&LenderId={}
-                    """.format(parse_id, lend_id)
+            url_list.append("""http://www.scotsmanguide.com/rsPopDefault.aspx?ucAdd=1001&MTXID={}&LenderId={}""".format(
+                parse_id, lend_id))
 
-        scrapy.Request(url=company.setdefault('Finance URL'), callback=self.parse_finance)
+        company['Finance URL'] = url_list
 
-        yield company
+        req = scrapy.Request(url=url_list[0], callback=self.parse_finance)
+        req.meta['company'] = company
+        yield req
 
-        for emp_el in response.css('tr > td[colspan="2"] > table.gColmCPHmain2Content1 td.widehalf'):
-            yield {
-                'Name': emp_el.css('b::text').extract_first(),
-                'Email': emp_el.css('a::text').extract_first(),
-                'Phone': emp_el.css('::text').extract()
-            }
-
-    @staticmethod
-    def parse_finance(response):
+    def parse_finance(self, response):
+        self.log('Scraping{}'.format(response.url))
         loantypes = []
         property_types = []
         e_list = response.css('td.LSRbody1CwtextC')
@@ -62,13 +61,12 @@ class ScottSpider(scrapy.Spider):
             check = el.css('abbr::text').extract_first()
             if check == 'Y':
                 if i < 19:
-                    loantypes.append(el.css('abbr::attr(title').extract_first())
+                    loantypes.append(el.css('abbr::attr(title)').extract_first())
                 else:
-                    property_types.append(el.css('abbr::attr(title').extract_first())
+                    property_types.append(el.css('abbr::attr(title)').extract_first())
             elif not check:
                 continue
-
-        yield {
+        fin_dat = {
             'Min': response.css('abbr[title="Min $"]::text').extract_first(),
             'Max': response.css('abbr[title="Max $"]::text').extract_first(),
             'LTV': response.css('abbr[title="LTV"]::text').extract_first(),
@@ -78,11 +76,9 @@ class ScottSpider(scrapy.Spider):
             'Loan Types': loantypes,
             'Property Types': property_types
         }
+        company = response.meta['company']
+        company.update(fin_dat)
+        yield company
 
 
-if __name__ == "__main__":
-    process = CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-    })
-    process.crawl(ScottSpider)
-    process.start()
+
