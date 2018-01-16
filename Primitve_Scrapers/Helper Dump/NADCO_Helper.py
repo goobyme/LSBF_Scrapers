@@ -1,18 +1,15 @@
 import shelve
 from selenium import webdriver
-from selenium import common
-from selenium.webdriver.support.ui import Select
-import time
 import pprint as pp
 
-INITPAGE = 'http://www.nadco.org/search/custom.asp?id=1316'   # Change this line upon failure
+INITPAGE = 'http://www.nadco.org/searchserver/people.aspx?id=D2F7175D-A978-484A-A0F9-8F34D6CC6458&cdbid=&canconnect=0&canmessage=0&map=False&toggle=False&hhSearchTerms='   # Change this line upon failure
 
 
 def core(browser):
     """Selenium scrape for prelim json data"""
     profile_links = []
-    for el in browser.find_element_by_css_selector('td[style="width:75%;border:none;"] a'):
-	      profile_links.append(el['href'])
+    for el in browser.find_elements_by_css_selector('td[style="width:75%;border:none;"] a'):
+        profile_links.append(el.get_attribute('href'))
 
     return profile_links
 
@@ -21,13 +18,16 @@ def iterator(start):
     sublist = []
     browser = webdriver.Chrome()
     browser.get(start)
-    for state in browser.find_elements_by_css_selector('option:'):
-        select = Select(browser.find_element_by_css_selector(
-        'select[name="cdlCustomFieldValueIDSTATES-SINGLE"]'))
-        select.select_by_visible_text(state.text)
-        browser.find_element_by_css_selector('input[type="submit"]').click()
+    for i in range(1, 40):
+        print('Scraping page {}'.format(i))
         sublist += core(browser)
-        browser.back()
+        parent_pagination = (browser.find_element_by_css_selector('td[style="font-size:9pt;"]'))
+        if i == 40:
+            break
+        elif i % 10 == 0:
+            parent_pagination.find_element_by_css_selector('img[src="/global_graphics/icons/pageRight.gif"]').click()
+        else:
+            parent_pagination.find_element_by_link_text(str(i+1)).click()
 
     browser.close()
     return sublist
@@ -37,7 +37,7 @@ def main():
     proto_profiles = iterator(INITPAGE)
 
     shelf_file = shelve.open('NADCO_Proto')
-    shelf_file['Profiles'] = proto_profiles
+    shelf_file['Links'] = proto_profiles
     shelf_file.close()
     print('Wrote to file\n')
     pp.pprint(proto_profiles)
