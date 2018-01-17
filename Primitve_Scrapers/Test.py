@@ -1,11 +1,9 @@
-import vobject
+import shelve
 import pprint
 
-vcf_file = open('C:\\Users\\James\\Downloads\\Atif_Ahmad.vcf', 'r')
-vcf_string = vcf_file.read()
+f = shelve.open('C:\\Users\\James\\PycharmProjects\\LSBF_Scrapers\\Primitve_Scrapers\\Helper Dump\\NADCO_Proto', 'r')
+start_urls = f.get('Links')
+filter(None, start_urls)
 
-vc = vobject.readOne(vcf_string)
-
-x = vc.contents
-print(x['n'][0].contents)
-print(type(x['n'][0]))
+pprint.pprint(start_urls)
+print(len(start_urls))

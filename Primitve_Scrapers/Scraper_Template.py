@@ -417,7 +417,6 @@ def main():
         except PermissionError:
             print('Please close csv file')
             input()
-    print(threadscomplete.sort())
     print('Done')
 
 

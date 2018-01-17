@@ -47,10 +47,10 @@ class ScottSpider(scrapy.Spider):
                 parse_id, lend_id))
         company['Finance URL'] = url_list
 
-        req = scrapy.Request(url=url_list[0], callback=self.parse_finance)
-        req.meta['company'] = company
-        yield req
-        # yield company
+        # req = scrapy.Request(url=url_list[0], callback=self.parse_finance)
+        # req.meta['company'] = company
+        # yield req
+        yield company
 
     @staticmethod
     def parse_finance(response):
