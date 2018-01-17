@@ -230,6 +230,31 @@ def personparsing(page, thread_ident, file_ident, proto_prof):
     return e
 
 
+def main():
+    os.chdir('/mnt/c/Users/Liberty SBF/Desktop/VOIT_VCF')
+    # os.chdir('C:\\Users\\Liberty SBF\\Desktop\\VOIT_VCF')
+    global employees
+    global init_proto_profile_list
+    shelf = shelve.open('VOIT_Links')
+    link_list = shelf['Profiles']
+    shelf.close()
+    startlength = len(link_list)
+    threads = []
+
+    for i in range(THREADCOUNT):
+        thread = threading.Thread(target=threadbot, args=(i+1, startlength, ))
+
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+    to_save = filter(None, employees)   # Gets rid of NoneTypes in list (very annoying if you don't do this!)
+    data_frame = pandas.DataFrame.from_records(to_save)
+    data_frame.to_csv('VOIT.csv')
+    print('Done')
+
+
 def threadbot(ident, total_len):
     """Reads global list_link for link to parse then parses to generate profile sublists , then merges with master"""
     print('Threadbot {} Initialized'.format(ident))
@@ -262,31 +287,6 @@ def threadbot(ident, total_len):
         employees += sublist
     finally:
         elist_lock.release()
-
-
-def main():
-    os.chdir('/mnt/c/Users/Liberty SBF/Desktop/VOIT_VCF')
-    # os.chdir('C:\\Users\\Liberty SBF\\Desktop\\VOIT_VCF')
-    global employees
-    global init_proto_profile_list
-    shelf = shelve.open('VOIT_Links')
-    link_list = shelf['Profiles']
-    shelf.close()
-    startlength = len(link_list)
-    threads = []
-
-    for i in range(THREADCOUNT):
-        thread = threading.Thread(target=threadbot, args=(i+1, startlength, ))
-
-        threads.append(thread)
-        thread.start()
-
-    for thread in threads:
-        thread.join()
-    to_save = filter(None, employees)   # Gets rid of NoneTypes in list (very annoying if you don't do this!)
-    data_frame = pandas.DataFrame.from_records(to_save)
-    data_frame.to_csv('VOIT.csv')
-    print('Done')
 
 
 if __name__ == "__main__":
