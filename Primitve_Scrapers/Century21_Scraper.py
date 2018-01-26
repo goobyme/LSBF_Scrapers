@@ -4,10 +4,15 @@ import pandas
 import re
 import threading
 import os
-import logging
 import datetime
-from Primitve_Scrapers.Reference import StateCodesList
+import time
 import json
+
+StateCodeList = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
+      "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+      "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+      "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+      "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
 
 """Globals and Setup"""
 THREADCOUNT = 20
@@ -20,9 +25,9 @@ llist_lock = threading.Lock()
 err_lock = threading.Lock()
 
 
-def webdl(url, retries=3, threadident=0):
+def webdl(url, threadident=0, retries=3):
     """Downloads web-page, retries on initial failures, returns None if fails thrice (common!)"""
-    print('Downloading...{}'.format(url))
+    print('{}-Downloading...{}'.format(threadident, url))
     for i in range(retries):
         try:
             r = requests.get(url)
@@ -56,11 +61,13 @@ def employeelistparsing(page, thread_ident):
     proto_profiles = []
     html_str = json.loads(page.text)['list']
     soup = bs4.BeautifulSoup(html_str, 'lxml')
+    page.close()
 
+    extraregex = re.compile(r"of.+")
     for parent in soup.find_all('h4'):
         proto = {
             'Link': 'https://commercial.century21.com' + parent.find('a')['href'],
-            'FullName': parent.find('a').get_text(),
+            'FullName': extraregex.sub('', parent.find('a').get_text()),
         }
         proto_profiles.append(proto)
     return proto_profiles
@@ -72,7 +79,10 @@ def personparsing(page, thread_ident, profile):
         soup = bs4.BeautifulSoup(page.text, 'lxml')
     except AttributeError:
         return profile
+    finally:
+        page.close()
     e = profile
+
     try:
         e['WorkPhone'] = soup.find('a', {'data-ctc-track': '["agent-ADP-CTC","call-agent-phone"]'}).get_text()
     except AttributeError:
@@ -81,15 +91,21 @@ def personparsing(page, thread_ident, profile):
         e['MobilePhone'] = soup.find('a', {'data-ctc-track': '["agent-ADP-CTC","call-agent-mobile"]'}).get_text()
     except AttributeError:
         pass
-    e['Link'] = soup.find('a', {'class': 'moreFromAgent'})['href']
-
 
     """Languages, Awards, Professional Designations"""
     regex = re.compile(r"\s{2,}")
-    for i in range(soup.find_all('div', {'class': 'designationTxt'})):
-        el = soup.find_all('div', {'class': 'designationTxt'})[i]
-        title = soup.find_all('h4')[i]
-        e[title] = regex.sub(', ', el.get_text())
+    try:
+        for i in range(len(soup.select('div.designationTxt'))):
+            if soup.select_one('h4').get_text() != 'Personal Profile':
+                el = soup.select('div.designationTxt')[i]
+                title = soup.select('h4')[i].get_text()
+                e[title] = regex.sub(', ', el.get_text())
+            else:
+                el = soup.select('div.designationTxt')[i]
+                title = soup.select('h4')[i+1].get_text()
+                e[title] = regex.sub(', ', el.get_text())
+    except TypeError or IndexError:
+        pass
 
     """Department/Office and Address"""
     streetregex = re.compile(r"^.+,")
@@ -97,17 +113,18 @@ def personparsing(page, thread_ident, profile):
     stateregex = re.compile(r"[A-Z]{2}")
     zipregex = re.compile(r"\d{5}$")
 
-    parent = soup.find('h3', {'class': 'officeName'})
+    parent = soup.select_one('h3.officeName')
     e['Department/Office'] = parent.find('b').get_text()
-    parse_text = parent.replace(e['Department/Office'] + ' ', '')
-    try:
-        e['StreetAddress'] = streetregex.findall(parse_text)[0]
-    except IndexError:
-        pass
+    parse_text = parent.get_text().replace(e['Department/Office'] + ' ', '')
     try:
         e['City'] = cityregex.findall(parse_text)[0]
+        try:
+            e['StreetAddress'] = streetregex.findall(parse_text)[0].replace(e.get('City'), '')
+        except IndexError:
+            pass
     except IndexError:
         pass
+
     try:
         e['State'] = stateregex.findall(parse_text)[0]
     except IndexError:
@@ -128,11 +145,17 @@ def personparsing(page, thread_ident, profile):
 
     """Areas Serviced"""
     locations = []
-    parent = soup.find('div', {'class': 'locationWrapper'})
-    for el in parent.find_all('a'):
-        if el.get_text() not in locations:
-            locations.append(el.get_text)
+    parent = soup.select_one('div.locationWrapper')
+    if parent:
+        for el in parent.find_all('a'):
+            if el.get_text() not in locations:
+                locations.append(el.get_text())
     e['AreasServiced'] = locations
+
+    if soup.select_one('a.moreFromAgent'):
+        e['ProfilePage'] = soup.select_one(('a.moreFromAgent'))['href']
+
+    print('{}-Finished parsing {}'.format(thread_ident, e.get('Link')))
 
     return e
 
@@ -140,52 +163,93 @@ def personparsing(page, thread_ident, profile):
 def threadbot(ident, total_len):
     """Reads global list_link for link to parse then parses to generate profile sublists , then merges with master"""
     print('Threadbot {} Initialized'.format(ident))
-    sublist = []
 
-    """Iterated function over global list with hand-coded queueing"""
-    # TODO integrate built in Queue functionality into threadbot
+    def writetoglobal(sublist):
+        global employees
+        print('Thread {} writing to list...'.format(ident))
+        elist_lock.acquire()
+        try:
+            print('{}-Writing to global'.format(ident))
+            employees += sublist
+        finally:
+            elist_lock.release()
+
     while True:
         llist_lock.acquire()
         if len(init_proto_profile_list) > 0:
             try:
-                link = init_proto_profile_list[0]    # Take proto-profile from list and removes from queue
-                init_proto_profile_list.remove(link)
+                sublink = init_proto_profile_list[0]    # Take proto-profile from list and removes from queue
+                init_proto_profile_list.remove(sublink)
                 length = len(init_proto_profile_list)
             finally:
                 llist_lock.release()
             print('Thread {} parsing link {} of {}'.format(ident, total_len - length, total_len))
-
-            """From here either feed through employeepageparsing or directly through personparsing"""
-            sublink = link
+            # From here either feed through employeepageparsing or directly through personparsing
             pagenumberregex = re.compile(r"(?<=&s=)\d+")
             while True:
-                protoprofiles = employeelistparsing(webdl(sublink, ident), ident)
-                if protoprofiles:
-                    for prof in protoprofiles:
-                        full_prof = personparsing(webdl(prof['Link'], ident), ident, prof)
-                        sublist.append(full_prof)
-                    pagenumberregex.sub(sublink, str(int(pagenumberregex.findall(sublink)[0]) + 10))
-                else:
+                sublist = []
+                a = True
+                for i in range(2):
+                    protoprofiles = employeelistparsing(webdl(sublink, ident), ident)
+                    if protoprofiles:
+                        for prof in protoprofiles:
+                            sublist.append(personparsing(webdl(prof['Link'], ident), ident, prof))
+                        sublink = pagenumberregex.sub(str(int(pagenumberregex.findall(sublink)[0]) + 10), sublink)
+                    else:
+                        writetoglobal(sublist)
+                        a = False
+                        break
+
+                    if i == 1:
+                        writetoglobal(sublist)
+                    else:
+                        continue
+
+                if not a:
                     break
+                else:
+                    continue
+
         else:
             llist_lock.release()
             print('Thread {} completed parsing'.format(ident))
             break
 
-    """Final merge with global list"""
-    print('Thread {} writing to list...'.format(ident))
-    elist_lock.acquire()
-    try:
-        global employees
-        employees += sublist
-    finally:
-        elist_lock.release()
+
+def filebot(interval=60):
+    global employees
+    i = 0
+    while True:
+        time.sleep(interval)
+        llist_lock.acquire()
+        try:
+            check = len(init_proto_profile_list)
+        finally:
+            llist_lock.release()
+
+        elist_lock.acquire()
+        try:
+            chunk = employees
+            employees = []
+        finally:
+            elist_lock.release()
+        to_save = filter(None, chunk)
+        data_frame = pandas.DataFrame.from_records(to_save)
+        data_frame.to_csv('Century21_{}.csv'.format(i))
+        i += 1
+        print('\nFilebot autosaved to file at {}\n'.format(str(datetime.datetime.now())))
+
+        if check < 3:
+            break
 
 
 def main():
+    os.chdir('/mnt/c/Users/Liberty SBF/PycharmProjects/LSBF_Scrapers/Primitve_Scrapers/C21/')
+    # os.chdir('C:\\Users\\Liberty SBF\\PycharmProjects\\LSBF_Scrapers\\Primitve_Scrapers\\C21')
+
     global employees
     global init_proto_profile_list
-    for state in StateCodesList.codes:
+    for state in StateCodeList:
         init_proto_profile_list.append(
             'https://commercial.century21.com/search.c21?lid=S{}&t=2&o=&s=0&subView=searchView.Paginate'.format(state))
     startlength = len(init_proto_profile_list)
@@ -195,6 +259,9 @@ def main():
         thread = threading.Thread(target=threadbot, args=(i+1, startlength, ))
         threads.append(thread)
         thread.start()
+
+    savethread = threading.Thread(target=filebot, args=())
+    savethread.start()
 
     for thread in threads:
         thread.join()

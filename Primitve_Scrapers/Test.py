@@ -1,9 +1,10 @@
-import shelve
-import pprint
+import re
 
-f = shelve.open('C:\\Users\\James\\PycharmProjects\\LSBF_Scrapers\\Primitve_Scrapers\\Helper Dump\\NADCO_Proto', 'r')
-start_urls = f.get('Links')
-filter(None, start_urls)
+page = 'https://commercial.century21.com/search.c21?lid=SAK&t=2&o=&s=0&subView=searchView.Paginate'
 
-pprint.pprint(start_urls)
-print(len(start_urls))
+pagenumberregex = re.compile(r"(?<=&s=)\d+")
+pagenumberregex.sub(str(int(pagenumberregex.findall(page)[0]) + 10), page)
+
+print(page)
+
+
