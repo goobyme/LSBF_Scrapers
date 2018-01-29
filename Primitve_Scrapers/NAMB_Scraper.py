@@ -13,18 +13,32 @@ browser.find_element_by_css_selector('input#search_button').click()
 time.sleep(2)
 
 profiles = []
-i = 1
+x = 1
 while True:
     for profile_el in browser.find_elements_by_css_selector('div.open-div'):
-        e = {'FullName': profile_el.find_element_by_css_selector('div.name-plate').text,}
-        try:
-            e['WorkPhone'] = profile_el.find_element_by_css_selector('div.phone-number').text.replace('Phone: ', '')
-        except exceptions.NoSuchElementException:
-            pass
-        try:
-            e['Fax'] = profile_el.find_element_by_css_selector('div.fax-number').text.replace('Fax: ', '')
-        except exceptions.NoSuchElementException:
-            pass
+        e = {}
+        for i in range(3):
+            try:
+                e['FullName']= profile_el.find_element_by_css_selector('div.name-plate').text
+                break
+            except exceptions.StaleElementReferenceException:
+                continue
+        for i in range(3):
+            try:
+                e['WorkPhone'] = profile_el.find_element_by_css_selector('div.phone-number').text.replace('Phone: ', '')
+                break
+            except exceptions.NoSuchElementException:
+                pass
+            except exceptions.StaleElementReferenceException:
+                continue
+        for i in range(3):
+            try:
+                e['Fax'] = profile_el.find_element_by_css_selector('div.fax-number').text.replace('Fax: ', '')
+                break
+            except exceptions.NoSuchElementException:
+                pass
+            except exceptions.StaleElementReferenceException:
+                continue
 
         def address_parser(text):
             cityregex = re.compile(r"^.+,")
@@ -38,41 +52,62 @@ while True:
             if zipregex.findall(text):
                 e['PostalCode'] = zipregex.findall(text)[0]
 
-        address_text = browser.find_element_by_css_selector('div.address-block').text.split('\n')
-        if len(address_text) == 3:
-            e['StreetAddress'] = address_text[0] + ' ' + address_text[1]
-            address_parser(address_text[2])
-        elif len(address_text) == 2:
-            e['StreetAddress'] = address_text[0]
-            address_parser(address_text[1])
-
-        text_list = profile_el.find_element_by_css_selector('div.member-info').text.split('\n')
-        e['Company'] = text_list[1]
-        if text_list[2]:
-            e['Title'] = text_list[2]
-
-        link_els = profile_el.find_elements_by_css_selector('div.icon-display > a')
-        for el in link_els:
+        for i in range(3):
             try:
-                link = el.get_attribute('href')
-                if 'mcontact' in link:
-                    e['ContactForm'] = 'https://mms.namb.org/' + link
-                else:
-                    e['Websiste'] = link
-            except exceptions.NoSuchAttributeException:
+                address_text = profile_el.find_element_by_css_selector('div.address-block').text.split('\n')
+                if len(address_text) == 3:
+                    e['StreetAddress'] = address_text[0] + ' ' + address_text[1]
+                    address_parser(address_text[2])
+                elif len(address_text) == 2:
+                    e['StreetAddress'] = address_text[0]
+                    address_parser(address_text[1])
+                break
+            except exceptions.StaleElementReferenceException:
                 continue
-
-        for el in profile_el.find_elements_by_css_selector('div.additional-info'):
+            except exceptions.NoSuchElementException:
+                pass
+        for i in range(3):
             try:
-                field = el.find_element_by_css_selector('div').text
-                entry = el.text.replace(field, '').strip()
-                e[field] = entry
+                text_list = profile_el.find_element_by_css_selector('div.member-info').text.split('\n')
+                e['Company'] = text_list[1]
+                if text_list[2]:
+                    e['Title'] = text_list[2]
+                break
+            except exceptions.StaleElementReferenceException:
+                continue
+        for i in range(3):
+            try:
+                link_els = profile_el.find_elements_by_css_selector('div.icon-display > a')
+                for el in link_els:
+                    try:
+                        link = el.get_attribute('href')
+                        if 'mcontact' in link:
+                            e['ContactForm'] = 'https://mms.namb.org/' + link
+                        else:
+                            e['Websiste'] = link
+                    except exceptions.NoSuchAttributeException:
+                        continue
+                break
             except exceptions.StaleElementReferenceException:
                 continue
 
+        for i in range(3):
+            try:
+                for el in profile_el.find_elements_by_css_selector('div.additional-info'):
+                    try:
+                        field = el.find_element_by_css_selector('div').text
+                        entry = el.text.replace(field, '').strip()
+                        e[field] = entry
+                    except exceptions.StaleElementReferenceException:
+                        continue
+                break
+            except exceptions.StaleElementReferenceException:
+                continue
+        profiles.append(e)
+
     try:
-        print('Parsed page {}'.format(i))
-        i += 1
+        print('Parsed page {}'.format(x))
+        x += 1
         browser.find_element_by_css_selector('div.pagination-button.page-number.next-page').click()
         time.sleep(2)
         continue
@@ -82,5 +117,5 @@ while True:
 browser.close()
 
 dataframe = pandas.DataFrame.from_records(profiles)
-dataframe.to_csv('NAMB.csv')
+dataframe.to_csv('NAMB_2.csv')
 print('Done')
