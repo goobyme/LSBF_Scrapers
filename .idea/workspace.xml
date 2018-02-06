@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0c68bbf5-dcde-4394-a237-d3091249f229" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/Scrapy_Scrapers/FAMP/__init__.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/profile_parser.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Primitve_Scrapers/FAMP_Scraper.py" afterPath="$PROJECT_DIR$/Primitve_Scrapers/FAMP_Scraper.py" />
-      <change beforePath="$PROJECT_DIR$/Scrapy_Scrapers/Century21/Century21/spiders/century21.py" afterPath="$PROJECT_DIR$/Scrapy_Scrapers/Century21/Century21/spiders/century21.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -66,8 +62,8 @@
       <file leaf-file-name="zipsearcher.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/zipsearcher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="104">
-              <caret line="16" column="84" lean-forward="false" selection-start-line="16" selection-start-column="84" selection-end-line="16" selection-end-column="84" />
+            <state relative-caret-position="78">
+              <caret line="15" column="30" lean-forward="true" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
               <folding>
                 <element signature="e#24#37#0" expanded="true" />
               </folding>
@@ -680,14 +676,20 @@
       <option name="project" value="LOCAL" />
       <updated>1517433492452</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Realtor Zipsearch(done) profile(WIP)">
+      <created>1517876683407</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1517876683407</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="307" y="64" width="1527" height="918" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19814447" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19814447" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32918397" sideWeight="0.50248754" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -745,7 +747,8 @@
     <MESSAGE value="NAMB" />
     <MESSAGE value="FAMP" />
     <MESSAGE value="FAMP_Helper" />
-    <option name="LAST_COMMIT_MESSAGE" value="FAMP_Helper" />
+    <MESSAGE value="Realtor Zipsearch(done) profile(WIP)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Realtor Zipsearch(done) profile(WIP)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1066,8 +1069,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/zipsearcher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="16" column="84" lean-forward="false" selection-start-line="16" selection-start-column="84" selection-end-line="16" selection-end-column="84" />
+        <state relative-caret-position="78">
+          <caret line="15" column="30" lean-forward="true" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
           <folding>
             <element signature="e#24#37#0" expanded="true" />
           </folding>
