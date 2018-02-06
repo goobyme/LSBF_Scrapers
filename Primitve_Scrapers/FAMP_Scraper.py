@@ -9,9 +9,6 @@ initpage = "http://www.myfamp.org/directory#/"
 browser = webdriver.Firefox()
 browser.get(initpage)
 
-browser.find_element_by_css_selector('a.gen-button').click()
-time.sleep(2)
-
 
 def find_element(css_selector, element, retries=3):
     for l in range(retries):
@@ -22,6 +19,13 @@ def find_element(css_selector, element, retries=3):
         except common.exceptions.StaleElementReferenceException:
             continue
 
+
+def selenium_threadbot():
+    pass
+
+
+def main():
+    pass
 
 links = []
 page_count = browser.find_element_by_css_selector('strong#total-pages').text
@@ -41,3 +45,6 @@ for i in range(int(page_count)):
 
 with shelve.open('FAMP_Links') as shelf_file:
     shelf_file['links'] = links
+
+if '__name__' == '__main__':
+    main()

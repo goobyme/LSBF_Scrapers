@@ -22,7 +22,7 @@ class Cent21Spider(scrapy.Spider):
 
         pagenumberregex = re.compile(r"(?<=&s=)\d+")
         pagenumberregex.sub(response.url, str(int(pagenumberregex.findall(response.url)[0]) + 10))
-        yield scrapy.Requests(
+        yield scrapy.Request(
             url=pagenumberregex.sub(response.url, str(int(pagenumberregex.findall(response.url)[0]) + 10)),
             callback=self.parse)
 
