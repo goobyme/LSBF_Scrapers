@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0c68bbf5-dcde-4394-a237-d3091249f229" name="Default" comment="">
+    <list default="true" id="0c68bbf5-dcde-4394-a237-d3091249f229" name="Default" comment="Realtor Zipsearch(done) profile(WIP)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Primitve_Scrapers/FAMP_Scraper.py" afterPath="$PROJECT_DIR$/Primitve_Scrapers/Old Scrapers/FAMP_Scraper.py" />
+      <change beforePath="$PROJECT_DIR$/Primitve_Scrapers/NAMB_Scraper.py" afterPath="$PROJECT_DIR$/Primitve_Scrapers/Old Scrapers/NAMB_Scraper.py" />
+      <change beforePath="$PROJECT_DIR$/Primitve_Scrapers/Scraper_Template.py" afterPath="$PROJECT_DIR$/Primitve_Scrapers/Old Scrapers/Scraper_Template.py" />
+      <change beforePath="$PROJECT_DIR$/Primitve_Scrapers/Test.py" afterPath="$PROJECT_DIR$/Primitve_Scrapers/Test.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -13,57 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-      <file leaf-file-name="FAMP_Helper.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Helper Dump/FAMP_Helper.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="416">
-              <caret line="23" column="21" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#30#0" expanded="true" />
-                <element signature="e#264#538#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="NAMB_Scraper.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/NAMB_Scraper.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1014">
-              <caret line="43" column="19" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="profile.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/FAMP/FAMP/spiders/profile.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="416">
-              <caret line="18" column="18" lean-forward="false" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
-              <folding>
-                <element signature="e#24#37#0" expanded="true" />
-                <element signature="e#1519#2163#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="rescrape.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/UCBI/UCBI/spiders/rescrape.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="624">
-              <caret line="25" column="49" lean-forward="false" selection-start-line="25" selection-start-column="49" selection-end-line="25" selection-end-column="49" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="zipsearcher.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="zipsearcher.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/zipsearcher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="78">
-              <caret line="15" column="30" lean-forward="true" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+            <state relative-caret-position="286">
+              <caret line="11" column="35" lean-forward="false" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
               <folding>
                 <element signature="e#24#37#0" expanded="true" />
               </folding>
@@ -71,11 +29,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="profile_parser.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/profile_parser.py">
+      <file leaf-file-name="Test.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
-              <caret line="23" column="47" lean-forward="false" selection-start-line="23" selection-start-column="47" selection-end-line="23" selection-end-column="47" />
+            <state relative-caret-position="234">
+              <caret line="400" column="0" lean-forward="false" selection-start-line="400" selection-start-column="0" selection-end-line="400" selection-end-column="0" />
+              <folding>
+                <element signature="e#21#6908#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="core.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/CMA/CMA/spiders/core.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1014">
+              <caret line="42" column="25" lean-forward="false" selection-start-line="42" selection-start-column="20" selection-end-line="42" selection-end-column="25" />
               <folding>
                 <element signature="e#24#37#0" expanded="true" />
               </folding>
@@ -102,6 +72,8 @@
       <find>shelve</find>
       <find>sub</find>
       <find>pagenumber</find>
+      <find>zipregex</find>
+      <find>line_text</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -135,8 +107,6 @@
         <option value="$PROJECT_DIR$/Primitve_Scrapers/Janitor Dump/NADCO_Janitor.py" />
         <option value="$PROJECT_DIR$/Scrapy_Scrapers/UCBI/UCBI/spiders/rescrape.py" />
         <option value="$PROJECT_DIR$/Primitve_Scrapers/Old Scrapers/EasternUnion_Scraper.py" />
-        <option value="$PROJECT_DIR$/Primitve_Scrapers/Test.py" />
-        <option value="$PROJECT_DIR$/Primitve_Scrapers/Test.py" />
         <option value="$PROJECT_DIR$/Primitve_Scrapers/Century21_Scraper.py" />
         <option value="$PROJECT_DIR$/Primitve_Scrapers/Helper Dump/Century21_Helper.py" />
         <option value="$PROJECT_DIR$/Primitve_Scrapers/Janitor Dump/CCIM_Assigner.py" />
@@ -149,12 +119,15 @@
         <option value="$PROJECT_DIR$/Scrapy_Scrapers/Century21/Century21/spiders/century21.py" />
         <option value="$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/profile_parser.py" />
         <option value="$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/zipsearcher.py" />
+        <option value="$PROJECT_DIR$/Primitve_Scrapers/Test.py" />
+        <option value="$PROJECT_DIR$/Primitve_Scrapers/Test.py" />
+        <option value="$PROJECT_DIR$/Scrapy_Scrapers/CMA/CMA/spiders/core.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="307" />
-    <option name="y" value="64" />
+    <option name="x" value="226" />
+    <option name="y" value="18" />
     <option name="width" value="1527" />
     <option name="height" value="918" />
   </component>
@@ -184,27 +157,32 @@
             <path>
               <item name="LSBF_Scrapers" type="b2602c69:ProjectViewProjectNode" />
               <item name="LSBF_Scrapers" type="462c0819:PsiDirectoryNode" />
+              <item name="Primitve_Scrapers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="LSBF_Scrapers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="LSBF_Scrapers" type="462c0819:PsiDirectoryNode" />
               <item name="Scrapy_Scrapers" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="LSBF_Scrapers" type="b2602c69:ProjectViewProjectNode" />
               <item name="LSBF_Scrapers" type="462c0819:PsiDirectoryNode" />
               <item name="Scrapy_Scrapers" type="462c0819:PsiDirectoryNode" />
-              <item name="Realtor" type="462c0819:PsiDirectoryNode" />
+              <item name="FAMP" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="LSBF_Scrapers" type="b2602c69:ProjectViewProjectNode" />
               <item name="LSBF_Scrapers" type="462c0819:PsiDirectoryNode" />
               <item name="Scrapy_Scrapers" type="462c0819:PsiDirectoryNode" />
-              <item name="Realtor" type="462c0819:PsiDirectoryNode" />
-              <item name="Realtor" type="462c0819:PsiDirectoryNode" />
+              <item name="FAMP" type="462c0819:PsiDirectoryNode" />
+              <item name="FAMP" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="LSBF_Scrapers" type="b2602c69:ProjectViewProjectNode" />
               <item name="LSBF_Scrapers" type="462c0819:PsiDirectoryNode" />
               <item name="Scrapy_Scrapers" type="462c0819:PsiDirectoryNode" />
-              <item name="Realtor" type="462c0819:PsiDirectoryNode" />
-              <item name="Realtor" type="462c0819:PsiDirectoryNode" />
+              <item name="FAMP" type="462c0819:PsiDirectoryNode" />
+              <item name="FAMP" type="462c0819:PsiDirectoryNode" />
               <item name="spiders" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -221,19 +199,19 @@
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/Liberty SBF/PycharmProjects/LSBF_Scrapers/Primitve_Scrapers/Century21_Scraper.py" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Scrapy_Scrapers\FAMP\FAMP\spiders" />
-      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Scrapy_Scrapers\FAMP\FAMP" />
-      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Scrapy_Scrapers\FAMP" />
-      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers" />
-      <recent name="C:\Users\Liberty SBF\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers\Old Scrapers" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Liberty SBF\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers\Helper Dump" />
       <recent name="C:\Users\Liberty SBF\PycharmProjects\LSBF_Scrapers\Reference" />
       <recent name="C:\Users\Liberty SBF\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers" />
       <recent name="C:\Users\James\PycharmProjects\Small_Scripts\Primitve_Scrapers" />
       <recent name="C:\Users\James\PycharmProjects\Small_Scripts\Scrapers" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers\Old Scrapers" />
+      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Scrapy_Scrapers\FAMP\FAMP\spiders" />
+      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Scrapy_Scrapers\FAMP\FAMP" />
+      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Scrapy_Scrapers\FAMP" />
+      <recent name="C:\Users\James\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -248,7 +226,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.zipsearcher">
+  <component name="RunManager" selected="Python.Test (1)">
     <configuration name="CCIM_Assigner" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -333,7 +311,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="LSBF_Scrapers" />
-      <option name="SCRIPT_NAME" value="C:\Users\James\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers\FAMP_Scraper.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\James\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers\Old Scrapers\FAMP_Scraper.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -387,7 +365,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="LSBF_Scrapers" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Primitve_Scrapers/NAMB_Scraper.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\James\PycharmProjects\LSBF_Scrapers\Primitve_Scrapers\Old Scrapers\NAMB_Scraper.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -683,22 +661,30 @@
       <option name="project" value="LOCAL" />
       <updated>1517876683407</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Realtor Zipsearch(done) profile(WIP)">
+      <created>1517876871305</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1517876871305</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="307" y="64" width="1527" height="918" extended-state="0" />
+    <frame x="226" y="18" width="1527" height="918" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19814447" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19814447" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32918397" sideWeight="0.50248754" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3278237" sideWeight="0.50248754" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3264463" sideWeight="0.49751243" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29381442" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32767624" sideWeight="0.49751243" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39556137" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -796,15 +782,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/twisted/internet/selectreactor.py" />
-    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/data.csv" />
     <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Scottsman_Guide/items.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -835,13 +812,6 @@
     </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/selenium/webdriver/common/service.py" />
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/selenium/webdriver/remote/errorhandler.py" />
-    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Scottsman_Guide/spiders/employees.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Scottsman_Guide/middlewares.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2418">
@@ -969,13 +939,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Janitor Dump/CCIM_Assigner.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="156">
@@ -984,36 +947,24 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/FAMP_Scraper.ipynb" />
-    <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/FAMP_Scraper.py">
+    <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Old Scrapers/FAMP_Scraper.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="488">
           <caret line="23" column="8" lean-forward="true" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Scraper_Template.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="20" column="27" lean-forward="false" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Helper Dump/FAMP_Helper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
+        <state relative-caret-position="0">
           <caret line="23" column="21" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#264#538#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/NAMB_Scraper.py">
+    <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Old Scrapers/NAMB_Scraper.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1014">
           <caret line="43" column="19" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1031,46 +982,86 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Scottsman_Guide/spiders/findata.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1170">
-          <caret line="53" column="21" lean-forward="false" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/UCBI/UCBI/spiders/rescrape.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="624">
+        <state relative-caret-position="592">
           <caret line="25" column="49" lean-forward="false" selection-start-line="25" selection-start-column="49" selection-end-line="25" selection-end-column="49" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/FAMP/FAMP/spiders/profile.py">
+    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/realtor_profiles_1.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="18" column="18" lean-forward="false" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
-          <folding>
-            <element signature="e#24#37#0" expanded="true" />
-            <element signature="e#1519#2163#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="-156">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/profiles_1.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/profile_parser.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
+        <state relative-caret-position="598">
           <caret line="23" column="47" lean-forward="false" selection-start-line="23" selection-start-column="47" selection-end-line="23" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Old Scrapers/Scraper_Template.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3874">
+          <caret line="20" column="27" lean-forward="false" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Scottsman_Guide/spiders/findata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1126">
+          <caret line="53" column="21" lean-forward="false" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/FAMP/FAMP/spiders/profile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="28" column="7" lean-forward="false" selection-start-line="28" selection-start-column="7" selection-end-line="30" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Scottsman_Guide/spiders/employees.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-40">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/zipsearcher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="11" column="35" lean-forward="false" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
           <folding>
             <element signature="e#24#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/Realtor/Realtor/spiders/zipsearcher.py">
+    <entry file="file://$PROJECT_DIR$/Primitve_Scrapers/Test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="15" column="30" lean-forward="true" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+        <state relative-caret-position="234">
+          <caret line="400" column="0" lean-forward="false" selection-start-line="400" selection-start-column="0" selection-end-line="400" selection-end-column="0" />
+          <folding>
+            <element signature="e#21#6908#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Scrapy_Scrapers/CMA/CMA/spiders/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1014">
+          <caret line="42" column="25" lean-forward="false" selection-start-line="42" selection-start-column="20" selection-end-line="42" selection-end-column="25" />
           <folding>
             <element signature="e#24#37#0" expanded="true" />
           </folding>
